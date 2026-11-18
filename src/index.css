@@ -21,6 +21,10 @@ body {
   gap: 10px;
 }
 
+.container.pending{
+  background:none;
+}
+
 .card{
   display : grid;
   place-items: center;

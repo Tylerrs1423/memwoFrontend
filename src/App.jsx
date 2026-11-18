@@ -26,6 +26,9 @@ const buildDeck = (size) => {
 
 
 function App() {
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [leaderboard, setLeaderboard] = useState([0,0]);
+  const [playerTurn, setPlayerTurn] = useState(1);
   const [cards, setCards] = useState(buildDeck);
   const [isChecking, setIsChecking] = useState(false);
   const [boardSize, setBoardSize] = useState(BOARDSIZE.MEDIUM);
@@ -92,6 +95,8 @@ function App() {
           )
         });
         setIsChecking(false);
+        setLeaderboard(data.game.leaderboard);
+        setPlayerTurn(playerTurn === 1 ? 2 : 1);
       }, 500);
     }
     else if (data.result === "PLAYER_ONE_WINS" || data.result === "PLAYER_TWO_WINS" || data.result === "DRAW"){
@@ -102,6 +107,7 @@ function App() {
             (card.id === previousFlipped.id || card.id === index) ? {...card, state: CARDSTATE.MATCHED} : card
           )
         });
+      setLeaderboard(data.game.leaderboard);
       }, 500);
 
       setTimeout(() => {
@@ -121,14 +127,16 @@ function App() {
           )
         });
         setIsChecking(false);
+        setPlayerTurn(playerTurn === 1 ? 2 : 1);
       }, 500);
-  
     }
   };
 
   return( 
     <div className="background">
-      <div className="container">
+      <div>Player {playerTurn}'s Turn</div>
+      <div>Leaderboard: {leaderboard[0]} {leaderboard[1]}</div>
+      <div className={`container ${!isGameStarted ? 'pending' : ''}`}>
         {cards.map((item, index) => (
           <div key={index} className={`card ${item.state}`} onClick={() => onFlip(index)}>
             {(item.state === CARDSTATE.MATCHED || item.state === CARDSTATE.FLIPPED)? item.value : ""}
@@ -141,7 +149,6 @@ function App() {
         <option value={BOARDSIZE.LARGE}>Large</option>
       </select>
       <button onClick={() => startGame(boardSize)}>Start Game</button>
-      
     </div> 
   )
   
